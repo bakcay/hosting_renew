@@ -9,6 +9,8 @@
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 
+use WHMCS\View\Menu\Item as MenuItem;
+
 add_hook('InvoiceCancelled', 1, function ($vars) {
 
     $invoiceid = $vars['invoiceid'];
@@ -58,3 +60,63 @@ add_hook('InvoiceCancelled', 1, function ($vars) {
 
     }
 });
+
+
+add_hook('ClientAreaNavbars', 1, function ($vars) {
+
+
+    $addon_uri = explode(DIRECTORY_SEPARATOR, __FILE__);
+    $addon_name = $addon_uri[count($addon_uri) - 2];
+
+    $primaryNavbar   = Menu::primaryNavbar();
+    // Kullanıcı giriş yapmışsa işlem yap
+    if (!is_null($primaryNavbar->getChild('Services'))) {
+        // 'Hizmetlerim' menüsünü bul
+        $servicesMenu = $primaryNavbar->getChild('Services');
+
+        // 'Hizmetlerim' menüsüne yeni bir link ekleyin
+        if (!is_null($servicesMenu)) {
+            $servicesMenu->addChild('Custom Module Divider', array(
+                'label' => '', // Görünecek isim
+                'uri' => '#', // Ayırıcı için yönlendirme adresi gerekmez
+                'order' => 43, // Menüdeki sıralama konumu
+                 'attributes' => array(
+                    'class' => 'nav-divider', // Ayırıcı için CSS sınıfı
+                ),
+            ));
+            $servicesMenu->addChild('Custom Module Link', array(
+                'label' => 'Servis Yenile', // Görünecek isim
+                'uri' => 'index.php?m='.$addon_name, // Linkin yönlendireceği adres
+                'order' => 45, // Menüdeki sıralama konumu
+            ));
+        }
+    }
+});
+
+add_hook('ClientAreaHomepagePanels', 1, function($homePagePanels) {
+    $newPanel = $homePagePanels->addChild(
+        'unique-css-name',
+        array(
+            'name' => 'Friendly Name',
+            'label' => 'Translated Language String',
+            'icon' => 'fas fa-calendar-alt', //see http://fortawesome.github.io/Font-Awesome/icons/
+            'order' => '1',
+            'extras' => array(
+                'color' => 'pomegranate', //see Panel Accents in template styles.css
+                'btn-link' => 'https://www.whmcs.com',
+                'btn-text' => Lang::trans('go'),
+                'btn-icon' => 'fas fa-arrow-right',
+            ),
+        )
+    );
+// Repeat as needed to add enough children
+    $newPanel->addChild(
+        'unique-css-name-id1',
+        array(
+            'label' => 'Panel Row Text Goes Here',
+            'uri' => 'index.php?m=yourmodule',
+            'order' => 10,
+        )
+    );
+});
+

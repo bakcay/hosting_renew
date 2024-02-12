@@ -136,37 +136,6 @@
 
         </table>
 
-        <div id="ccinfomodal" class="modal fade" role="dialog">
-            <div class="modal-dialog">
-
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Kredi Kartı Bilgileri</h4>
-                    </div>
-                    <div class="modal-body">
-                        {if $ccinfo eq ''}
-                            <p>Sistemimizde Kredi kartı Tanımlı Değil.</p>
-                            <p>Kredi kartınızı tanımlayarak ödemelerinizi otomatikleştirebilirsiniz.</p>
-                            <p>
-                                <a href="kriweb-storedcard.php">Buraya tıklayarak</a> kredi kartınızı tanımlayabilirsiniz.
-                            </p>
-                        {else}
-                            <p>{$ccinfo} adlı kredi kartınız sistemimizde kayıtlıdır.</p>
-                            <p>
-                                <a href="kriweb-storedcard.php">Buraya tıklayarak</a> kredi kartı bilgilerinizi değiştirebilirsiniz.
-                            </p>
-                        {/if}
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
-                    </div>
-                </div>
-
-            </div>
-        </div>
 
         <style>
             .page-header {
