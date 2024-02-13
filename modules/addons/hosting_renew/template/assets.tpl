@@ -20,11 +20,18 @@
                   year: domainyear,
                 } = $(this).data(); // jQuery .data() ile destructuring kullanımı
 
-          const addonscount = addonsid.split(',').length;
+          let addonscount;
+          if (typeof addonsid === 'string') {
+            addonscount = addonsid.split(',').length;
+          }
+          else {
+            // addonsid string değilse, uygun bir varsayılan değer atayın
+            addonscount = 0; // veya beklenen bir değer
+          }
 
           let warningtext = '';
           if (producttype === 'hosting') {
-               warningtext = `${domain} hizmetine ilişkin ücret özeti aşağıdaki gibidir.<br>
+            warningtext = `${domain} hizmetine ilişkin ücret özeti aşağıdaki gibidir.<br>
                 <table width="100%" class="datatable table">
                   <tbody>
                     <tr> <td>Ürün</td> <td>${productname}</td> </tr>
@@ -36,10 +43,10 @@
                   </tbody>
                 </table>
                 <br><i>Hizmetinizin devam etmesi için Yenile butonuna tıklayınız. Butona tıkladığınız da ödeme ekranına yönlendirileceksiniz.
-                <br><small>** Kullanmak istemediğiniz hizmetler için 'Hizmet iptali' butonuna tıklayınız.</small>`;
-                      }
-              else if (producttype === 'domain') {
-                warningtext = `${domain} alan adına ilişkin ücret özeti aşağıdaki gibidir.<br>
+                `;
+          }
+          else if (producttype === 'domain') {
+            warningtext = `${domain} alan adına ilişkin ücret özeti aşağıdaki gibidir.<br>
                 <table width="100%" class="datatable table">
                   <tbody>
                     <tr> <td>Alan Adı</td> <td>${domain}</td> </tr>
@@ -48,7 +55,7 @@
                   </tbody>
                 </table>
                 <br><i>Alan adınızın uzaması için Yenile butonuna tıklayınız. Butona tıkladığınız da ödeme ekranına yönlendirileceksiniz.
-                <br><small>** Kullanmak istemediğiniz hizmetler için 'Alan Adı iptali' butonuna tıklayınız.</small>`;
+                `;
           }
 
           const postparams = producttype === 'hosting'
@@ -68,10 +75,20 @@
             allowOutsideClick  : false,
             preConfirm         : () => {
               return new Promise((resolve, reject) => {
-                $.post('/portal/ajax.php?method=renewproduct', postparams).done(data => {
+                $.post('index.php?m=hosting_renew&method=renewproduct', postparams).done(data => {
+
                   if (data.result === 'success') { // '=' yerine '===' kullanılmalı
                     gotourl = 'creditcard.php?invoiceid=' + data.invoiceid;
                     resolve();
+                  }else if (data.result === 'redirect') { // '=' yerine '===' kullanılmalı
+
+
+                    $.post('cart.php?a=add&renewals=true', data.querystring).done(data => {
+                      gotourl = 'cart.php?a=view';
+                      resolve();
+                    })
+
+
                   }
                   else {
                     Swal.showValidationMessage( // 'reject' yerine 'Swal.showValidationMessage' kullanılıyor
@@ -89,7 +106,7 @@
             if (result.value) {
               Swal.fire({
                 icon             : 'success',
-                title            : 'Ödeme sayfasına yönlendiriliyorsunuz.',
+                title            : 'Yönlendiriliyorsunuz.',
                 showConfirmButton: false,
                 timer            : 1500, // Belirli bir süre sonra otomatik kapanması için timer eklendi
               });
@@ -102,7 +119,6 @@
           });
 
         });
-
 
       });
 

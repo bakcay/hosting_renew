@@ -93,6 +93,39 @@ add_hook('ClientAreaNavbars', 1, function ($vars) {
     }
 });
 
+
+add_hook('ClientAreaSecondarySidebar', 1, function  ($secondaryNavbar) {
+    // Kullanıcı giriş yapmış ve bir hosting id'si varsa işlem yap
+    if (!is_null($secondaryNavbar) && isset($_GET['id']) && in_array($_GET['action'],['productdetails','domaindetails']) && $_GET['id'] > 0){
+        // Hosting id'sini al
+        $relatedid = $_GET['id'];
+
+        $type='hosting';
+        if($_GET['action'] == 'domaindetails'){
+            $type='domain';
+        }
+
+        // Eğer sekonder navbar'da 'Services' menüsü varsa, onu al
+        if (!is_null($secondaryNavbar->getChild(($type=='hosting'?'Hosting Yenile':'Domain Yenile')))) {
+            $servicesMenu = $secondaryNavbar->getChild(($type=='hosting'?'Hosting Yenile':'Domain Yenile'));
+        } else {
+            // Yoksa, 'Services' menüsünü oluştur
+            $servicesMenu = $secondaryNavbar->addChild(($type=='hosting'?'Hosting Yenile':'Domain Yenile'));
+        }
+
+
+
+        // 'Services' menüsüne 'Renew Hosting' öğesini ekle
+        $servicesMenu->addChild(($type=='hosting'?'Hosting Yenile':'Domain Yenile'), array(
+            'label' => ' Yenile',
+            'uri' => '/index.php?m=hosting_renew&'.($type=='hosting'?'hostingid':'domainid').'=' . $relatedid,
+            'order' => 10, // Menüdeki sıralama konumu
+        ));
+    }
+});
+
+
+
 add_hook('ClientAreaHomepagePanels', 1, function($homePagePanels) {
     $newPanel = $homePagePanels->addChild(
         'unique-css-name',

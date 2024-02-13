@@ -1,14 +1,4 @@
-<!-- BEGIN PORTLET-->
-<div class="portlet light bordered">
-    <div class="portlet-title">
-        <div class="caption">
-            <i class="font-blue fa fa-recycle "></i>
-            <span class="caption-subject   font-blue">Hizmet Yenile</span>
-        </div>
-        <div class="actions"></div>
 
-    </div>
-    <div class="portlet-body">
 
 
         <table width="100%" class="datatable table table-hover table-bordered tc-table ">
@@ -30,20 +20,7 @@
                 <tr>
                     <td>
                         {$v.product} - {$v.domain}
-                        {if $v.addons|count gt 0}
-                            <small data-toggle="collapse" data-target="#attrs{$v.id}" style="display: list-item">
-                                <i class="fa fa-plus-square-o" aria-hidden="true"></i> {$v.addons|count} bağlı eklenti (Toplam {$v.addonstotal}$)
-                            </small>
-                            <div id="attrs{$v.id}" class="collapse">
-                                <ul>
-                                    {foreach from=$v.addons key=ka item=va name=inda}
-                                        <li>&raquo; {$va.addonname} <span style="float:right;">({$va.amount}$)</span>
-                                        </li>
-                                    {/foreach}
-                                </ul>
 
-                            </div>
-                        {/if}
 
                     </td>
 
@@ -148,7 +125,5 @@
         </style>
 
 
-    </div>
-</div>
 
 {include file="./assets.tpl"}
