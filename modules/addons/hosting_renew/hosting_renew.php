@@ -18,7 +18,7 @@ function hosting_renew_config() {
     $configarray = [
         "name"        => "Hosting renewal",
         "description" => "Hosting renewal module for WHMCS",
-        "version"     => "1.02 Beta",
+        "version"     => "1.03",
         "author"      => "Bünyamin AKÇAY",
         "fields"      => []
     ];
