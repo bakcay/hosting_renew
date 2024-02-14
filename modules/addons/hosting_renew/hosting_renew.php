@@ -16,11 +16,10 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 
 function hosting_renew_config() {
     $configarray = [
-        "name"        => "Hosting renew modülü",
-        "description" => "hosting renew modülü",
+        "name"        => "Hosting renewal",
+        "description" => "Hosting renewal module for WHMCS",
         "version"     => "1.02 Beta",
         "author"      => "Bünyamin AKÇAY",
-        "language"    => "english",
         "fields"      => []
     ];
     return $configarray;
@@ -34,14 +33,7 @@ function hosting_renew_activate() {
         'status'      => 'success',
         'description' => 'Aktif edildi'
     ];
-    return [
-        'status'      => 'error',
-        'description' => 'Aktif edilemedi'
-    ];
-    return [
-        'status'      => 'info',
-        'description' => 'Aktif etme Başarılı.'
-    ];
+
 
 }
 
@@ -53,14 +45,7 @@ function hosting_renew_deactivate() {
         'status'      => 'success',
         'description' => 'If successful, you can return a message to show the user here'
     ];
-    return [
-        'status'      => 'error',
-        'description' => 'If an error occurs you can return an error message for display here'
-    ];
-    return [
-        'status'      => 'info',
-        'description' => 'If you want to give an info message to a user you can return it here'
-    ];
+
 
 }
 
@@ -70,6 +55,59 @@ function hosting_renew_upgrade($vars) {
 
 function hosting_renew_output($vars) {
 
+
+    $smarty = new Smarty();
+    $apiresponse = [];
+
+
+    if(isset($_POST['action']) && ($_POST['action'] == 'savesettings')){
+        $settings = [
+            'showinallpages',
+            'showinhosting',
+            'showindomain',
+            'showsummaryonhomepage',
+            'hideexpireddomains',
+        ];
+
+        foreach ($settings as $k => $v) {
+
+            //insert or update settings
+            $result = Capsule::table('tblconfiguration')
+                             ->where('setting', 'LIKE', 'hosting_renew_'.$v)
+                             ->first();
+
+            if(!isset($result->id)){
+                Capsule::table('tblconfiguration')
+                       ->insert([
+                           'setting' => 'hosting_renew_'.$v,
+                           'value'   => (string)$_POST[$v]
+                       ]);
+            }else{
+                Capsule::table('tblconfiguration')
+                       ->where('setting', 'LIKE', 'hosting_renew_'.$v)
+                       ->update(['value' => (string)$_POST[$v]]);
+            }
+
+        }
+        $smarty->assign('post_success', 1);
+    }
+
+
+    $settings = Capsule::table('tblconfiguration')
+                       ->where('setting', 'LIKE', 'hosting_renew_%')
+                       ->get();
+
+    foreach ($settings as $k => $v) {
+        $apiresponse['setting'][str_replace('hosting_renew_','',$v->setting)] = $v->value;
+    }
+
+
+
+    $smarty->assign('setting', $apiresponse['setting']);
+    $smarty->assign('_lang', $vars['_lang']);
+    $smarty->caching = false;
+    $smarty->compile_dir = $GLOBALS['templates_compiledir'];
+    $smarty->display(dirname(__FILE__) . '/template/admin_settings.tpl');
 
 }
 
@@ -101,6 +139,7 @@ function hosting_renew_clientarea($vars) {
         echo json_encode($apiresponse);
         exit;
     }else{
+        $apiresponse['_lang']=$vars['_lang'];
         return [
             'pagetitle'    => 'Hizmet Yenileme',
             'breadcrumb'   => [],

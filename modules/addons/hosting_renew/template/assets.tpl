@@ -120,6 +120,18 @@
 
         });
 
+        $(document).on("click",'.softwarning', function(){
+
+          let text = $(this).data('text');
+            Swal.fire({
+                title: 'Bilgi',
+                text: text,
+                icon: 'warning',
+                confirmButtonText: 'Tamam'
+            });
+
+        });
+
       });
 
 

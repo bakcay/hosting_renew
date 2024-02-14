@@ -1,0 +1,36 @@
+{
+  "schema": "1.1",
+  "type": "whmcs-addons",
+  "name": "hosting_renew",
+  "license": "proprietary",
+  "category": "utilities",
+  "description": {
+    "name": "Hosting Renewal",
+    "tagline": "Effortlessly renew hosting and domain services directly within WHMCS.",
+    "long": "Hosting Renewal is a WHMCS addon designed to streamline the process of renewing hosting and domain services. It enables the automatic renewal of services, provides a detailed overview of upcoming renewals, and simplifies the management of service lifecycles.",
+    "features": [
+      "Automate hosting and domain renewals",
+      "View upcoming renewals and expiration dates",
+      "Perform bulk renewal operations",
+      "Manage renewal notifications and reminders",
+      "Support for multiple payment gateways",
+      "Integrate seamlessly with existing WHMCS services"
+    ]
+  },
+  "logo": {
+    "filename": "logo.png"
+  },
+  "support": {
+    "homepage": "https://github.com/bakcay/hosting_renew",
+    "docs_url": "https://github.com/bakcay/hosting_renew"
+  },
+  "authors": [
+    {
+      "name": "John Doe",
+      "homepage": "https://www.bunyam.in/"
+    }
+  ],
+  "keywords": [
+    "hosting", "renewal", "WHMCS", "domain", "service management"
+  ]
+}

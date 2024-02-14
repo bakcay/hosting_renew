@@ -64,6 +64,13 @@ add_hook('InvoiceCancelled', 1, function ($vars) {
 
 add_hook('ClientAreaNavbars', 1, function ($vars) {
 
+    $setting = Capsule::table('tblconfiguration')
+                     ->where('setting', 'hosting_renew_showinallpages')->first();
+
+    if($setting->value != 1){
+        return;
+    }
+
 
     $addon_uri = explode(DIRECTORY_SEPARATOR, __FILE__);
     $addon_name = $addon_uri[count($addon_uri) - 2];
@@ -76,16 +83,16 @@ add_hook('ClientAreaNavbars', 1, function ($vars) {
 
         // 'Hizmetlerim' menüsüne yeni bir link ekleyin
         if (!is_null($servicesMenu)) {
-            $servicesMenu->addChild('Custom Module Divider', array(
+            $servicesMenu->addChild('Hostingrenew Divider', array(
                 'label' => '', // Görünecek isim
                 'uri' => '#', // Ayırıcı için yönlendirme adresi gerekmez
                 'order' => 43, // Menüdeki sıralama konumu
-                 'attributes' => array(
+                'attributes' => array(
                     'class' => 'nav-divider', // Ayırıcı için CSS sınıfı
                 ),
             ));
             $servicesMenu->addChild('Custom Module Link', array(
-                'label' => 'Servis Yenile', // Görünecek isim
+                'label' => 'Hizmet & Domain Yenile', // Görünecek isim
                 'uri' => 'index.php?m='.$addon_name, // Linkin yönlendireceği adres
                 'order' => 45, // Menüdeki sıralama konumu
             ));
@@ -105,19 +112,25 @@ add_hook('ClientAreaSecondarySidebar', 1, function  ($secondaryNavbar) {
             $type='domain';
         }
 
+        $setting = Capsule::table('tblconfiguration')
+                     ->where('setting', 'hosting_renew_showin'.$type)->first();
+        if($setting->value != 1){
+            return;
+        }
+
         // Eğer sekonder navbar'da 'Services' menüsü varsa, onu al
-        if (!is_null($secondaryNavbar->getChild(($type=='hosting'?'Hosting Yenile':'Domain Yenile')))) {
-            $servicesMenu = $secondaryNavbar->getChild(($type=='hosting'?'Hosting Yenile':'Domain Yenile'));
+        if (!is_null($secondaryNavbar->getChild(($type=='hosting'?'Hizmet Yenilenmesi':'Alan Adı Yenilenmesi')))) {
+            $servicesMenu = $secondaryNavbar->getChild(($type=='hosting'?'Hizmet Yenilenmesi':'Alan Adı Yenilenmesi'));
         } else {
             // Yoksa, 'Services' menüsünü oluştur
-            $servicesMenu = $secondaryNavbar->addChild(($type=='hosting'?'Hosting Yenile':'Domain Yenile'));
+            $servicesMenu = $secondaryNavbar->addChild(($type=='hosting'?'Hizmet Yenilenmesi':'Alan Adı Yenilenmesi'));
         }
 
 
 
         // 'Services' menüsüne 'Renew Hosting' öğesini ekle
-        $servicesMenu->addChild(($type=='hosting'?'Hosting Yenile':'Domain Yenile'), array(
-            'label' => ' Yenile',
+        $servicesMenu->addChild(($type=='hosting'?'Hizmet Yenilenmesi':'Alan Adı Yenilenmesi'), array(
+            'label' => 'Şimdi Yenile',
             'uri' => '/index.php?m=hosting_renew&'.($type=='hosting'?'hostingid':'domainid').'=' . $relatedid,
             'order' => 10, // Menüdeki sıralama konumu
         ));
@@ -127,27 +140,35 @@ add_hook('ClientAreaSecondarySidebar', 1, function  ($secondaryNavbar) {
 
 
 add_hook('ClientAreaHomepagePanels', 1, function($homePagePanels) {
+
+    $setting = Capsule::table('tblconfiguration')
+                     ->where('setting', 'hosting_renew_showsummaryonhomepage')->first();
+
+    if($setting->value != 1){
+        return;
+    }
+
+
     $newPanel = $homePagePanels->addChild(
-        'unique-css-name',
+        'hosting-renew-module',
         array(
-            'name' => 'Friendly Name',
-            'label' => 'Translated Language String',
+            'name' => 'Hosting Renewal Module Panel',
+            'label' => 'Hosting Yenileme Modülü',
             'icon' => 'fas fa-calendar-alt', //see http://fortawesome.github.io/Font-Awesome/icons/
             'order' => '1',
             'extras' => array(
                 'color' => 'pomegranate', //see Panel Accents in template styles.css
-                'btn-link' => 'https://www.whmcs.com',
-                'btn-text' => Lang::trans('go'),
-                'btn-icon' => 'fas fa-arrow-right',
+                'btn-link' => 'index.php?m=hosting_renew',
+                'btn-text' => 'Yenile',
+                'btn-icon' => 'fas fa-sync',
             ),
         )
     );
-// Repeat as needed to add enough children
     $newPanel->addChild(
-        'unique-css-name-id1',
+        'hosting-renew-module-1',
         array(
-            'label' => 'Panel Row Text Goes Here',
-            'uri' => 'index.php?m=yourmodule',
+            'label' => 'Servislerinizi ve alan adlarınızı faturalandırılma tarihinden önce yenileyebilirsiniz',
+            'uri' => '#',
             'order' => 10,
         )
     );

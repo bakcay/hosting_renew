@@ -43,13 +43,22 @@ if (!isset($_GET['hostingid'])) {
     $_domain_pricing = json_decode(json_encode($_domain_pricing), true);
 
 
+    $setting = Capsule::table('tblconfiguration')
+                     ->where('setting', 'hosting_renew_hideexpireddomains')->first();
+
+    $hdays = -60;
+    if ($setting->value >1) {
+        $hdays = $setting->value*-1;
+    }
+
+
     $domains = Capsule::table('tbldomains as tbd')
                       ->where('userid', $userid)
                       ->whereIn('status', [
                           'Active',
                           'Expired'
                       ])
-                      ->where('nextduedate', '>', date('Y-m-d', strtotime('-60 day')));
+                      ->where('nextduedate', '>', date('Y-m-d', strtotime($hdays.' day')));
     if ($domainid > 0) {
         $domains->where('tbd.id', $domainid);
     }
