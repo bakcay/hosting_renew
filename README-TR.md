@@ -1,4 +1,4 @@
-<img src="modules/addons/logo.png" align="right" />
+<img src="modules/addons/hosting_renew/logo.png" align="right" />
 
 # Hosting ve Domain Yenileme Modülü
 
